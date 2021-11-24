@@ -1,11 +1,16 @@
-FROM registry.cn-hangzhou.aliyuncs.com/abuxliu/flask:1.1.2
+FROM python:alpine as build
 
-MAINTAINER abuxliu <abuxliu@gmail.com>
-
-ENV LANG zh_CN.UTF-8
-
-WORKDIR /usr/local/application
+WORKDIR /app
 
 COPY . .
 
-CMD ["python", "main.py"]
+RUN pip install pyinstaller -y && \
+    pyinstaller -F main.py
+
+FROM alpine
+
+WORKDIR /app
+
+COPY --from=build /app/main /app/main
+
+CMD ["/app/main"]
