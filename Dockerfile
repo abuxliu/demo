@@ -4,13 +4,16 @@ WORKDIR /app
 
 COPY . .
 
-RUN pip install pyinstaller -y && \
-    pyinstaller -F main.py
+RUN pip install -r requirements.txt && \
+    pip install pyinstaller && \
+    apk add binutils
+
+RUN pyinstaller -F main.py
 
 FROM alpine
 
 WORKDIR /app
 
-COPY --from=build /app/main /app/main
+COPY --from=build /app/dist/main /app/main
 
 CMD ["/app/main"]
